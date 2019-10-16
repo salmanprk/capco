@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <h1>\{{ msg }}</h1>
+    
+    <h1>{{ msg }}</h1>
     <Search></Search>
   </div>
 </template>
 
 <script>
-import Search from './Search'
+import Search from './Search.vue'
 export default {
   name: 'app',
   components: {
