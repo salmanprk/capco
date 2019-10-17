@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    
+    <title>Capco Aziz</title>
     <!-- <h1>{{ msg }}</h1> -->
     <Search></Search>
   </div>
