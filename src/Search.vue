@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <h3>New App for Capco Aziz</h3>
+  <div class="container">
+     <b-jumbotron header="Capco Aziz" lead="New Travel App for Capco Aziz">
+    <p>For more information visit website</p>
+  
     <b-container class="bv-example-row">
         <b-row>
             <b-col>Origin</b-col>
@@ -9,48 +11,49 @@
         </b-row>
         <br>
         <b-row>
-            <b-col>
-                <div>
-                    <label class="typo__label" for="ajax">Departure Airport</label>
-                    <multiselect v-model="firstAirport" id="ajax" label="full" track-by="iataCode" placeholder="Type to search" open-direction="bottom" :options="countries" :multiple="false" :searchable="true" :loading="isLoading" :internal-search="false" :clear-on-select="true" :close-on-select="false" :options-limit="300" :limit="3" :limit-text="limitText" :max-height="300" :show-no-results="false" :hide-selected="true" @search-change="asyncFind1">
-                        <!-- <template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag">J<span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">R❌</span></span></template>
-                        <template slot="clear" slot-scope="props">
-                        <div class="multiselect__clear" v-if="selectedCountries.length" @mousedown.prevent.stop="clearAll(props.search)"></div>
-                        </template> -->
-                        <span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
-                    </multiselect>
-                    <pre class="language-json"><code>{{ firstAirport  }}</code></pre>
-                </div>
-            </b-col>
-            <b-col>2 of 3</b-col>
-            <!-- <b-col>
-                <multiselect v-model="selectedCountries" id="ajax" label="name" track-by="code" placeholder="Type to search" open-direction="bottom" :options="countries" :multiple="true" :searchable="true" :loading="isLoading" :internal-search="false" :clear-on-select="false" :close-on-select="false" :options-limit="300" :limit="3" :limit-text="limitText" :max-height="600" :show-no-results="false" :hide-selected="true" @search-change="asyncFind">
-                        <span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
-                    </multiselect>
-                    <pre class="language-json"><code>{{ selectedCountries  }}</code></pre>
+            <cool-select class="searchinput" v-model="selected" :items="items" :loading="loading" item-text="full" placeholder="Choose Departure City" disable-filtering-by-search @search="onSearch">
+                <template slot="no-data">
+                    {{
+                    noData
+                        ? "No information found by request."
+                        : "We need at least 2 letters to search."
+                    }}
+                </template>
+                <template slot="item" slot-scope="{ item }">
+                    <div class="item">
 
-            </b-col> -->
+                    <div>
+                        <span class="item-name"> {{ item.full }} </span> <br />
+                        <!-- <span class="item-domain"> {{ item.domain }} </span> -->
+                    </div>
+                    </div>
+                </template>
+            </cool-select>
         </b-row>
-        <b-button @click='clickOne'>Search</b-button>
+        <span>  {{ selected }}</span>
+        <br>
+        <b-button @click=''>Search</b-button>
     </b-container>
-    
+    </b-jumbotron>
   </div>
 </template>
 
 <script>
 import Multiselect from "vue-multiselect";
+import { CoolSelect } from 'vue-cool-select'
 import { ajaxFindCountry, amadeus, Amadeus } from './amadeus.js';
 export default {
   //   name: 'app',
   components: {
-    Multiselect
+    Multiselect,
+    CoolSelect 
   },
   data() {
     return {
-    firstAirport: [],
-      selectedCountries: [],
-      countries: [],
-      isLoading: false
+      selected: null,
+      items: [],
+      noData: false,
+      loading: false
     };
   },
   methods: {
@@ -76,14 +79,56 @@ export default {
          this.isLoading = false           
        }).catch(err => console.log(err))
      },
-     clearAll () {
-       this.firstAirport = []
-     }
-  }
-};
+    onSearch(search) {
+      const lettersLimit = 2;
+
+      this.noData = false;
+      if (search.length < lettersLimit) {
+        this.items = [];
+        this.loading = false;
+        return;
+      }
+      this.loading = true;
+      console.log("RUNS")
+      ajaxFindCountry(search)
+      .then(response => {
+        var objectArray = []
+        response.forEach(el => {
+            // looks for AIRPORTS
+            if (el.subType == "AIRPORT") {
+                if (el.address.stateCode) {
+                  objectArray.push({"name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.stateCode}, ${el.address.countryName}`  })
+
+                } else {
+                  objectArray.push({"name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.countryName}`  })
+
+                }
+            }  
+         })
+         
+         this.items = objectArray
+         this.loading = false;
+         console.log(this.items)
+         if (!this.items.length) this.noData = true;
+      })
+      .catch(err => console.log(err))
+    }
+}
+}
 </script>
 <style scoped>
-.border1 {
-    border-color: blue
+.item {
+  display: flex;
+  align-items: center;
+ 
+}
+.IZ-select__item {
+  font-size: 0.8rem;
+}
+.item-name {
+  font-size: 12px;
+}
+.searchinput {
+  font-size: 0.7rem;
 }
 </style>
