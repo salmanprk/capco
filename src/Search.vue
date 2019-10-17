@@ -85,15 +85,9 @@
 </template>
 
 <script>
-import Multiselect from "vue-multiselect";
-import { CoolSelect } from 'vue-cool-select'
 import { lowFareSearch, cheapDateSearch, ajaxFindCountry, amadeus, Amadeus } from './amadeus.js';
 export default {
   //   name: 'app',
-  components: {
-    Multiselect,
-    CoolSelect 
-  },
   data() {
     return {
       selected: null,
