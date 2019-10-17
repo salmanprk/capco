@@ -5,9 +5,18 @@ export const amadeus = new Amadeus({
 });
 export function ajaxFindCountry (query) {
     //console.log("Hi")
-    amadeus.referenceData.locations.get({
-      keyword : query,
-      subType : Amadeus.location.any
-      })
+    if (query.length == 0) {
+        return 0
+    } else 
+    {
+        return amadeus.referenceData.locations.get({
+            keyword : query,
+            subType : Amadeus.location.any
+            })
+            .then(res=> {
+                return res.data
+            })
+    }
+    
 }
   
