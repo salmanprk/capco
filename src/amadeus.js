@@ -18,5 +18,11 @@ export function ajaxFindCountry (query) {
             })
     }
     
+};
+export function cheapDateSearch (origin, destination) {
+    return amadeus.shopping.flightDates.get({
+        origin : origin,
+        destination : destination
+    })
 }
   

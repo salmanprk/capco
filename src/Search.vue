@@ -1,17 +1,14 @@
 <template>
   <div class="container">
      <b-jumbotron header="Capco Aziz" lead="New Travel App for Capco Aziz">
-    <p>For more information visit website</p>
-  
+    <!-- <p>For more information visit website</p> -->
+    <b-alert class="alert-link" show>Choose Origin City and Destination to Find Lowest Price</b-alert>
     <b-container class="bv-example-row">
+       
         <b-row>
-            <b-col>Origin</b-col>
-            <b-col>-</b-col>
-            <b-col>Destination</b-col>
-        </b-row>
-        <br>
-        <b-row>
-            <cool-select class="searchinput" v-model="selected" :items="items" :loading="loading" item-text="full" placeholder="Choose Departure City" disable-filtering-by-search @search="onSearch">
+          <b-col>
+            <label>Origin</label>
+            <cool-select class="searchinput" v-model="selected" :items="items" :loading="loading" item-text="full" placeholder="Choose Departure City" disable-filtering-by-search @search="onSearch" @select="ori">
                 <template slot="no-data">
                     {{
                     noData
@@ -29,10 +26,40 @@
                     </div>
                 </template>
             </cool-select>
+             <span class="chosen" v-if="origin_city"> Departure: {{ origin_city.cityCode }}</span>
+             <!-- <span v-else>You have not selected your origin</span> -->
+          </b-col>
+          <!-- 2nd Lookup -->
+          <b-col>
+            <label>Destination</label>
+            <cool-select class="searchinput" v-model="list" :items="items" :loading="loading" item-text="full" placeholder="Choose Destination City" disable-filtering-by-search @search="onSearch" @select="dest">
+                <template slot="no-data">
+                    {{
+                    noData
+                        ? "No information found by request."
+                        : "We need at least 2 letters to search."
+                    }}
+                </template>
+                <template slot="item" slot-scope="{ item }">
+                    <div class="item">
+
+                    <div>
+                        <span class="item-name"> {{ item.full }} </span> <br />
+                        <!-- <span class="item-domain"> {{ item.domain }} </span> -->
+                    </div>
+                    </div>
+                </template>
+            </cool-select>
+            <span class="chosen" v-if="destination_city"> Destination: {{ destination_city.cityCode }}</span>
+          </b-col>
         </b-row>
-        <span>  {{ selected }}</span>
+        
+        
         <br>
-        <b-button @click=''>Search</b-button>
+        <b-button @click='searchDates'>Search</b-button>
+        <br>
+        <br>
+        <b-alert class="alert-link" show>Low Fare Search for a given date</b-alert>
     </b-container>
     </b-jumbotron>
   </div>
@@ -41,7 +68,7 @@
 <script>
 import Multiselect from "vue-multiselect";
 import { CoolSelect } from 'vue-cool-select'
-import { ajaxFindCountry, amadeus, Amadeus } from './amadeus.js';
+import { cheapDateSearch, ajaxFindCountry, amadeus, Amadeus } from './amadeus.js';
 export default {
   //   name: 'app',
   components: {
@@ -53,11 +80,25 @@ export default {
       selected: null,
       items: [],
       noData: false,
-      loading: false
+      loading: false,
+      list: null,
+      origin_city: null,
+      destination_city: null
+
     };
   },
   methods: {
-
+      searchDates() {
+        cheapDateSearch(this.origin_city.cityCode, this.destination_city.cityCode)
+        .then(response => {console.log(`Cheapest Dates between ${this.origin_city} and ${this.destination_city}  ${response}`)})
+        .catch(err => console.log(err))
+      },
+      dest(select) {
+        this.destination_city = select
+      },
+      ori(select) {
+        this.origin_city = select
+      },
       limitText (count) {
         return `and ${count} other countries`
      },
@@ -97,10 +138,10 @@ export default {
             // looks for AIRPORTS
             if (el.subType == "AIRPORT") {
                 if (el.address.stateCode) {
-                  objectArray.push({"name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.stateCode}, ${el.address.countryName}`  })
+                  objectArray.push({ "cityCode": el.address.cityCode, "countryCode": el.address.countryCode,  "name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.stateCode}, ${el.address.countryName}`  })
 
                 } else {
-                  objectArray.push({"name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.countryName}`  })
+                  objectArray.push({ "cityCode": el.address.cityCode, "countryCode": el.address.countryCode,  "name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.countryName}`  })
 
                 }
             }  
@@ -130,5 +171,10 @@ export default {
 }
 .searchinput {
   font-size: 0.7rem;
+}
+.chosen {
+  font-size: 14px;
+  color: blue;
+  padding: 1px;
 }
 </style>
