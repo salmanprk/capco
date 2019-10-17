@@ -24,5 +24,12 @@ export function cheapDateSearch (origin, destination) {
         origin : origin,
         destination : destination
     })
+};
+export function lowFareSearch (origin, destination, date) {
+    return amadeus.shopping.flightOffers.get({
+        origin : origin,
+        destination : destination,
+        departureDate : date
+    })
 }
   
