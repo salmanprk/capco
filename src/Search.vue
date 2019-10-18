@@ -1,10 +1,12 @@
 <template>
-  <div class="container-fluid">
+  <!-- <div class="container-fluid"> -->
+    <b-container>
+    <br>
     <b-jumbotron header="Capco Aziz" lead="New Travel App for Capco Aziz">
     <!-- <p>For more information visit website</p> -->
     <b-container fluid class="bv-example-row">
       <!-- <b-alert class="alert-link" show>Choose Origin City and Destination to Find Lowest Price</b-alert> -->
-    
+        
        <b-alert class="alert-link" show>Low Fare Search - {{ this.selectedValue}}</b-alert>
         <b-row>
           <b-col>
@@ -63,73 +65,48 @@
         <b-button variant="primary" @click='parseOffers'>Search</b-button>
         <br>
         <br>
+        <!-- </b-container>
 
-        
+        <b-container class="bv-example-row"> -->
         <div v-for="(flight, index) in flights" :key="index">
-          <b-container fluid class="bv-example-row">
-            <b-row>
-              <b-col>
-              
-                <b-card border-variant="light" header="Light" class="flightCard">
+                <b-card border-variant="light" class="flightCard">
                   <b-row>
                     <b-col>
                       <h5>Price: Base <b-badge variant="primary">${{flight.price}}</b-badge> + Tax <b-badge variant="danger">${{flight.tax}}</b-badge></h5>
                     </b-col>
-                    <b-col>
+                    <!-- <b-col>
                       <p>This flight has {{flight.flightLegDetails.length}} legs.</p>
-                    </b-col>
+                    </b-col> -->
                   </b-row>
-                  <!-- {{flight.flightLegDetails[0].flightDetail1}} -->
-                  <!-- <b-container> -->
-                    <!-- <b-tabs card>
-                      <b-tab title="Tab 1" active>
-                        <b-card-text>Tab Contents 1</b-card-text>
-                      </b-tab>
-                      <b-tab title="Tab 2">
-                        <b-card-text>Tab Contents 2</b-card-text>
-                      </b-tab>
-                    </b-tabs>
-                  <b-card-text> -->
-                  
-                    <b-row>
-                       <b-tabs card>
-                      <div class="text-center" v-for="(flightLeg, key) in (flight.flightLegDetails)" :key="key">
+          
+                      <b-tabs card>
+                      <div class="" v-for="(flightLeg, key) in (flight.flightLegDetails)" :key="key">
                          
                             <b-tab :title="key+1" active>
+                              <b-card-title>Leg: {{key+1}} of {{flight.flightLegDetails.length}}</b-card-title>
                               <b-card-text>
-                            <div class="">
-                              <p>Departs: {{ flightLeg.flightDetail1.departure.iataCode }} at {{flightLeg.flightDetail1.departure.at}}</p>
-                              <p>Arrival: {{ flightLeg.flightDetail1.arrival.iataCode}} in Terminal: {{flightLeg.flightDetail1.arrival.terminal}} at {{flightLeg.flightDetail1.arrival.at}}</p>
-                              <p>Total Duration: {{flightLeg.flightDetail1.duration}}</p>
-                              <p>operated by {{flightLeg.flightDetail1.carrierCode}} - Flight No: {{flightLeg.flightDetail1.number}} </p>
-                            </div>
+                                <div class="">
+                                  <b-row>
+                                    <b-col><p><span class="badge badge-primary">Departure</span><h4>{{ flightLeg.flightDetail1.departure.iataCode }}</h4> at {{flightLeg.flightDetail1.departure.at}}</p>
+                                    </b-col>
+                                    <b-col><p><span class="badge badge-info">Arrival</span><h4>{{ flightLeg.flightDetail1.arrival.iataCode}}</h4> in Terminal: {{flightLeg.flightDetail1.arrival.terminal}} at {{flightLeg.flightDetail1.arrival.at}}</p>
+                                  </b-col>
+                                  </b-row>
+                                  <p>
+                                  <span class="badge badge-secondary">Duration</span> <h5>{{flightLeg.flightDetail1.duration}}</h5>
+                                  </p>
+                                  <blockquote class="blockquote">
+                                    <footer class="blockquote-footer">operated by <cite title="Source Title">{{flightLeg.flightDetail1.carrierCode}}</cite> - Flight No: {{flightLeg.flightDetail1.number}} </footer>
+                                  </blockquote>
+                                </div>
                               </b-card-text>
-                            </b-tab>
-                          
-                          <!-- <span>Leg: {{ key+1 }} </span> -->
-                          <!-- <b-col> -->
-                            <!-- <div class="detailsCard">
-                              <p>Departs: {{ flightLeg.flightDetail1.departure.iataCode }} at {{flightLeg.flightDetail1.departure.at}}</p>
-                              <p>Arrival: {{ flightLeg.flightDetail1.arrival.iataCode}} in Terminal: {{flightLeg.flightDetail1.arrival.terminal}} at {{flightLeg.flightDetail1.arrival.at}}</p>
-                              <p>Total Duration: {{flightLeg.flightDetail1.duration}}</p>
-                              <p>operated by {{flightLeg.flightDetail1.carrierCode}} - Flight No: {{flightLeg.flightDetail1.number}} </p>
-                            </div> -->
-                            
-                          <!-- </b-col>  -->
-                        <!-- {{flightLeg.flightDetail1}} -->
-                        
+                            </b-tab>           
                       </div>
                       </b-tabs>
-                    </b-row> 
-                  </b-card-text>
-                  <!-- </b-container> -->
                 </b-card>
-              </b-col>
-            </b-row>
             <br>
-          </b-container>
+          
         </div>
-        
         <br>
         <b-button variant="primary" @click='searchDates'>Cheapest Fares</b-button>
         <br>
@@ -141,21 +118,11 @@
         </template>
         <br>
         <br>
+        </b-container>
         
-        <!-- <template>
-           <div>
-             <b-table hover :items="alloffers"></b-table>
-            </div>
-        </template> -->
-        
-        <!-- <div v-else>
-          <h3>No Results Loaded</h3>
-        </div> -->
-        
-
-    </b-container>
     </b-jumbotron>
-  </div>
+    </b-container>
+    
 </template>
 
 <script>
@@ -434,5 +401,11 @@ export default {
   font-size: 12px;
   text-align: left;
   max-height: 400px;
+}
+input {
+  border: none;
+}
+.badge {
+  font-size:15px;
 }
 </style>
