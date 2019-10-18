@@ -7,10 +7,10 @@
     <b-container fluid class="bv-example-row">
       <!-- <b-alert class="alert-link" show>Choose Origin City and Destination to Find Lowest Price</b-alert> -->
         
-       <b-alert class="alert-link" show>Low Fare Search - {{ this.selectedValue}}</b-alert>
+       <!-- <b-alert class="alert-link" show>Low Fare Search - {{ this.selectedValue}}</b-alert> -->
         <b-row>
           <b-col>
-            <label>Origin</label>
+            <label><h5>Origin</h5></label>
             <cool-select class="searchinput" v-model="selected" :items="items" :loading="loading" item-text="full" placeholder="Choose Departure City" disable-filtering-by-search @search="onSearch" @select="ori">
                 <template slot="no-data">
                     {{
@@ -29,7 +29,7 @@
                     </div>
                 </template>
             </cool-select>
-             <span class="chosen" v-if="origin_city"> Departure: {{ origin_city.cityCode }}</span>
+             <span class="text-primary chosen" v-if="origin_city"> Departure: {{ origin_city.cityCode }}</span>
              <!-- <span v-else>You have not selected your origin</span> -->
           </b-col>
           <b-col>
@@ -57,7 +57,7 @@
                     </div>
                 </template>
             </cool-select>
-            <span class="chosen" v-if="destination_city"> Destination: {{ destination_city.cityCode }}</span>
+            <span class="text-primary chosen" v-if="destination_city"> Destination: {{ destination_city.cityCode }}</span>
           </b-col>
         </b-row>
         <br>
@@ -68,7 +68,12 @@
         <!-- </b-container>
 
         <b-container class="bv-example-row"> -->
-        <div v-for="(flight, index) in flights" :key="index">
+          
+
+          
+          <div v-if="flightLoaded">          
+            <div v-for="(flight, index) in flights" :key="index">
+          
                 <b-card border-variant="light" class="flightCard">
                   <b-row>
                     <b-col>
@@ -106,6 +111,15 @@
                 </b-card>
             <br>
           
+          </div>
+        </div>
+        <div v-else>
+          <div v-if="!isLoading" class="text-center">
+            <h3>Enter your search...</h3>
+          </div>
+          <div v-else class="text-center">
+            <b-spinner style="width: 5rem; height: 5rem;"  variant="primary" label="Text Centered"></b-spinner>
+          </div>
         </div>
         <br>
         <b-button variant="primary" @click='searchDates'>Cheapest Fares</b-button>
@@ -137,6 +151,7 @@ export default {
     return {
       selected: null,
       flightLoaded: false,
+      isLoading: false,
       selectedValue: new Date(),
       items: [],
       noData: false,
@@ -238,6 +253,8 @@ export default {
         return objArray
       },
       parseOffers(arg) {
+        this.flightLoaded = false
+        this.isLoading = true;
         var obj = Date.parse(this.selectedValue)
         var year = this.selectedValue.getFullYear()
         var month = this.selectedValue.getMonth()+1
@@ -255,6 +272,7 @@ export default {
           this.flights = store
           console.log(this.flights)
           this.flightLoaded = true
+          this.isLoading = false
         })
         .catch(err => console.log(err))
         
@@ -390,9 +408,7 @@ export default {
   font-size: 0.7rem;
 }
 .chosen {
-  font-size: 14px;
-  color: blue;
-  padding: 1px;
+  padding: 5px;
 }
 .flightCard {
   font-size: 15px;
