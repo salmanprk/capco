@@ -3,9 +3,9 @@
     <b-jumbotron header="Capco Aziz" lead="New Travel App for Capco Aziz">
     <!-- <p>For more information visit website</p> -->
     <b-container fluid class="bv-example-row">
-      <b-alert class="alert-link" show>Choose Origin City and Destination to Find Lowest Price</b-alert>
+      <!-- <b-alert class="alert-link" show>Choose Origin City and Destination to Find Lowest Price</b-alert> -->
     
-       
+       <b-alert class="alert-link" show>Low Fare Search - {{ this.selectedValue}}</b-alert>
         <b-row>
           <b-col>
             <label>Origin</label>
@@ -58,7 +58,77 @@
             <span class="chosen" v-if="destination_city"> Destination: {{ destination_city.cityCode }}</span>
           </b-col>
         </b-row>
+        <br>
+        <!-- <b-button variant="primary" @click='searchFares'>Search Dates</b-button> -->
+        <b-button variant="primary" @click='parseOffers'>Search</b-button>
+        <br>
+        <br>
+
         
+        <div v-for="(flight, index) in flights" :key="index">
+          <b-container fluid class="bv-example-row">
+            <b-row>
+              <b-col>
+              
+                <b-card border-variant="light" header="Light" class="flightCard">
+                  <b-row>
+                    <b-col>
+                      <h5>Price: Base <b-badge variant="primary">${{flight.price}}</b-badge> + Tax <b-badge variant="danger">${{flight.tax}}</b-badge></h5>
+                    </b-col>
+                    <b-col>
+                      <p>This flight has {{flight.flightLegDetails.length}} legs.</p>
+                    </b-col>
+                  </b-row>
+                  <!-- {{flight.flightLegDetails[0].flightDetail1}} -->
+                  <!-- <b-container> -->
+                    <!-- <b-tabs card>
+                      <b-tab title="Tab 1" active>
+                        <b-card-text>Tab Contents 1</b-card-text>
+                      </b-tab>
+                      <b-tab title="Tab 2">
+                        <b-card-text>Tab Contents 2</b-card-text>
+                      </b-tab>
+                    </b-tabs>
+                  <b-card-text> -->
+                  
+                    <b-row>
+                       <b-tabs card>
+                      <div class="text-center" v-for="(flightLeg, key) in (flight.flightLegDetails)" :key="key">
+                         
+                            <b-tab :title="key+1" active>
+                              <b-card-text>
+                            <div class="">
+                              <p>Departs: {{ flightLeg.flightDetail1.departure.iataCode }} at {{flightLeg.flightDetail1.departure.at}}</p>
+                              <p>Arrival: {{ flightLeg.flightDetail1.arrival.iataCode}} in Terminal: {{flightLeg.flightDetail1.arrival.terminal}} at {{flightLeg.flightDetail1.arrival.at}}</p>
+                              <p>Total Duration: {{flightLeg.flightDetail1.duration}}</p>
+                              <p>operated by {{flightLeg.flightDetail1.carrierCode}} - Flight No: {{flightLeg.flightDetail1.number}} </p>
+                            </div>
+                              </b-card-text>
+                            </b-tab>
+                          
+                          <!-- <span>Leg: {{ key+1 }} </span> -->
+                          <!-- <b-col> -->
+                            <!-- <div class="detailsCard">
+                              <p>Departs: {{ flightLeg.flightDetail1.departure.iataCode }} at {{flightLeg.flightDetail1.departure.at}}</p>
+                              <p>Arrival: {{ flightLeg.flightDetail1.arrival.iataCode}} in Terminal: {{flightLeg.flightDetail1.arrival.terminal}} at {{flightLeg.flightDetail1.arrival.at}}</p>
+                              <p>Total Duration: {{flightLeg.flightDetail1.duration}}</p>
+                              <p>operated by {{flightLeg.flightDetail1.carrierCode}} - Flight No: {{flightLeg.flightDetail1.number}} </p>
+                            </div> -->
+                            
+                          <!-- </b-col>  -->
+                        <!-- {{flightLeg.flightDetail1}} -->
+                        
+                      </div>
+                      </b-tabs>
+                    </b-row> 
+                  </b-card-text>
+                  <!-- </b-container> -->
+                </b-card>
+              </b-col>
+            </b-row>
+            <br>
+          </b-container>
+        </div>
         
         <br>
         <b-button variant="primary" @click='searchDates'>Cheapest Fares</b-button>
@@ -71,50 +141,13 @@
         </template>
         <br>
         <br>
-        <b-button variant="primary" @click='searchFares'>Search Dates</b-button>
-        <b-button variant="primary" @click='parseOffers'>Test</b-button>
-        <br>
-        <br>
-        <b-alert class="alert-link" show>Low Fare Search - {{ this.selectedValue}}</b-alert>
-        <template>
+        
+        <!-- <template>
            <div>
              <b-table hover :items="alloffers"></b-table>
             </div>
-        </template>
-        <div v-for="(flight, index) in flights" :key="index">
-          <b-container fluid class="bv-example-row">
-            <b-row>
-              <b-col> 
-                <b-card border-variant="light" class="text-center">  
-                    
-                  <b-card-text>
-                    <h3>Price <b-badge variant="primary">${{flight.price}}</b-badge></h3>
-                    <h5>+ Tax <b-badge variant="danger">${{flight.tax}}</b-badge></h5>
-                  </b-card-text>
-                </b-card>
-              </b-col>
-              <!-- <b-col>2 of 3</b-col> -->
-              <b-col cols='8'>
-                <b-card border-variant="light" header="Light 1" class="text-center">
-                  <!-- {{flight.flightLegDetails[0].flightDetail1}} -->
-                  <p>This flight has {{flight.flightLegDetails.length}} legs.</p>
-                  <div v-for="(flightLeg, key) in (flight.flightLegDetails)" :key="key">
-                    <b-card-text> 
-                      <p>Departs: {{ flightLeg.flightDetail1.departure.iataCode }} at {{flightLeg.flightDetail1.departure.at}}</p>
-                      <p>Arrival: {{ flightLeg.flightDetail1.arrival.iataCode}} in Terminal: {{flightLeg.flightDetail1.arrival.terminal}} at {{flightLeg.flightDetail1.arrival.at}}</p>
-                      <p>Total Duration: {{flightLeg.flightDetail1.duration}}</p>
-                      <p>operated by {{flightLeg.flightDetail1.carrierCode}} - Flight No: {{flightLeg.flightDetail1.number}} </p>
-                    <br>
-                    <!-- {{flightLeg.flightDetail1}} -->
-                    </b-card-text>
-                  </div> 
-                  
-                </b-card>
-              </b-col>
-            </b-row>
-            <br>
-          </b-container>
-        </div>
+        </template> -->
+        
         <!-- <div v-else>
           <h3>No Results Loaded</h3>
         </div> -->
@@ -246,7 +279,7 @@ export default {
         console.log("IN")
         lowFareSearch(this.origin_city.cityCode, this.destination_city.cityCode, full_date)
         .then(response => {
-          var obj = response.data
+          var obj = response.data.slice(0,10)
           console.log("Low Fare Response")
           console.log(obj)
           var store = this.parsA(obj)
@@ -393,5 +426,13 @@ export default {
   font-size: 14px;
   color: blue;
   padding: 1px;
+}
+.flightCard {
+  font-size: 15px;
+}
+.detailsCard {
+  font-size: 12px;
+  text-align: left;
+  max-height: 400px;
 }
 </style>
