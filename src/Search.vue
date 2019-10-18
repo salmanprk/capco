@@ -1,6 +1,6 @@
 <template>
   <!-- <div class="container-fluid"> -->
-    <b-container>
+    <b-container fluid>
     <br>
     <b-jumbotron header="Capco Aziz" lead="New Travel App for Capco Aziz">
     <!-- <p>For more information visit website</p> -->
@@ -10,7 +10,7 @@
        <!-- <b-alert class="alert-link" show>Low Fare Search - {{ this.selectedValue}}</b-alert> -->
         <b-row>
           <b-col>
-            <label><h5>Origin</h5></label>
+            <label>Origin</label>
             <cool-select class="searchinput" v-model="selected" :items="items" :loading="loading" item-text="full" placeholder="Choose Departure City" disable-filtering-by-search @search="onSearch" @select="ori">
                 <template slot="no-data">
                     {{
@@ -61,7 +61,7 @@
           </b-col>
         </b-row>
         <br>
-        <!-- <b-button variant="primary" @click='searchFares'>Search Dates</b-button> -->
+        <!-- <b-button variant="primary" @click='checkInLink'>Test</b-button> -->
         <b-button variant="primary" @click='parseOffers'>Search</b-button>
         <br>
         <br>
@@ -98,11 +98,14 @@
                                   </b-col>
                                   </b-row>
                                   <p>
-                                  <span class="badge badge-secondary">Duration</span> <h5>{{flightLeg.flightDetail1.duration}}</h5>
-                                  </p>
+                                    <span class="badge badge-secondary">Duration</span>
+                                  </p> 
+                                  <h5>{{flightLeg.flightDetail1.duration}}</h5>
+                                  
                                   <blockquote class="blockquote">
-                                    <footer class="blockquote-footer">operated by <cite title="Source Title">{{flightLeg.flightDetail1.carrierCode}}</cite> - Flight No: {{flightLeg.flightDetail1.number}} </footer>
+                                    <footer class="blockquote-footer">operated by <cite title="Source Title">{{ flightLeg.flightDetail1.carrierCode}}</cite> - Flight No: {{flightLeg.flightDetail1.number}} </footer>
                                   </blockquote>
+                                  <b-btn variant="primary" @click="checkInLink(flightLeg.flightDetail1.carrierCode)">Book</b-btn>
                                 </div>
                               </b-card-text>
                             </b-tab>           
@@ -141,7 +144,7 @@
 
 <script>
 import { CoolSelect } from "vue-cool-select";
-import { lowFareSearch, cheapDateSearch, ajaxFindCountry, amadeus, Amadeus } from './amadeus.js';
+import { airlineCodeLookup, airlineCheckIn, lowFareSearch, cheapDateSearch, ajaxFindCountry, amadeus, Amadeus } from './amadeus.js';
 export default {
   components: {
     CoolSelect
@@ -222,7 +225,32 @@ export default {
 
     };
   },
+   computed: {
+    // a computed getter
+    codeLook: function (arg) {
+      // `this` points to the vm instance
+      return this.checkCode(arg)
+    }
+  },
   methods: {
+    checkInLink(arg) {
+        airlineCheckIn('SQ')
+        .then(response => {
+          console.log(response.data[0].href)
+          console.log(window.location.href)
+          window.location.href = response.data[0].href
+        })
+        .catch(err => console.log(err))
+      },
+      checkCode(arg) {
+        airlineCodeLookup(arg)
+        .then(response => {
+
+          console.log(response)
+          return response.data[0].businessName
+        })
+        .catch(err => console.log(err))
+      },
       parsA(data) {
         var objArray = []
         //console.log(data)
@@ -337,24 +365,24 @@ export default {
       limitText (count) {
         return `and ${count} other countries`
      },
-     asyncFind1 (query) {
-       this.isLoading = true
-       ajaxFindCountry(query).then(response => {
-        console.log("Name of City:" + response[0].address.cityName)
-        var arry = []
-        response.forEach(el => {
-            // looks for AIRPORTS
-            if (el.subType == "AIRPORT") {
-                arry.push({"name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.stateCode || null}, ${el.address.countryName}`  })
-            }
-            //arry.push(el.name)
+    //  asyncFind1 (query) {
+    //    this.isLoading = true
+    //    ajaxFindCountry(query).then(response => {
+    //     console.log("Name of City:" + response[0].address.cityName)
+    //     var arry = []
+    //     response.forEach(el => {
+    //         // looks for AIRPORTS
+    //         if (el.subType == "AIRPORT") {
+    //             arry.push({"name": el.detailedName, "iataCode": el.iataCode, "full": `${el.name}, ${el.address.cityName}, ${el.address.stateCode || null}, ${el.address.countryName}`  })
+    //         }
+    //         //arry.push(el.name)
             
-         })
-         console.log("Locations Array: " + arry)
-         this.countries = arry
-         this.isLoading = false           
-       }).catch(err => console.log(err))
-     },
+    //      })
+    //      console.log("Locations Array: " + arry)
+    //      this.countries = arry
+    //      this.isLoading = false           
+    //    }).catch(err => console.log(err))
+    //  },
     onSearch(search) {
       const lettersLimit = 2;
 
@@ -384,7 +412,7 @@ export default {
          
          this.items = objectArray
          this.loading = false;
-         console.log(this.items)
+         //console.log(this.items)
          if (!this.items.length) this.noData = true;
       })
       .catch(err => console.log(err))

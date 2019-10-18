@@ -31,5 +31,15 @@ export function lowFareSearch (origin, destination, date) {
         destination : destination,
         departureDate : date
     })
+};
+export function airlineCodeLookup (arg) {
+    return amadeus.referenceData.airlines.get({
+        airlineCodes : arg
+    })
+};
+export function airlineCheckIn (arg) {
+    return amadeus.referenceData.urls.checkinLinks.get({
+        airlineCode : arg
+    })
 }
   
