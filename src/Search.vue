@@ -125,7 +125,7 @@
           </div>
         </div>
         <br>
-        <b-button variant="primary" @click='searchDates'>Cheapest Fares</b-button>
+        <!-- <b-button variant="primary" @click='searchDates'>Cheapest Fares</b-button>
         <br>
         <br>
         <template>
@@ -133,7 +133,7 @@
              <b-table hover :items="offers" :fields="fields"></b-table>
             </div>
         </template>
-        <br>
+        <br> -->
         <br>
         </b-container>
         
@@ -234,7 +234,7 @@ export default {
   },
   methods: {
     checkInLink(arg) {
-        airlineCheckIn('SQ')
+        airlineCheckIn(arg)
         .then(response => {
           console.log(response.data[0].href)
           console.log(window.location.href)
